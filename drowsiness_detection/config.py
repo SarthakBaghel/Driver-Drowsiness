@@ -8,6 +8,8 @@ class DetectorConfig:
     predictor_path: Path = Path("models/shape_predictor_68_face_landmarks.dat")
     eye_aspect_ratio_threshold: float = 0.25
     consecutive_frame_threshold: int = 20
+    enable_ear_calibration: bool = True
+    ear_calibration_frames: int = 300
     mouth_aspect_ratio_threshold: float = 0.6
     yawn_frame_threshold: int = 30
     mar_smoothing_window: int = 5

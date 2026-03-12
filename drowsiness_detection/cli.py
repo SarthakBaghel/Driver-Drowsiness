@@ -45,6 +45,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="Consecutive closed-eye frames required to trigger alert",
     )
     parser.add_argument(
+        "--ear-calibration-frames",
+        type=int,
+        default=300,
+        help="Number of initial frames to calibrate personalized EAR threshold",
+    )
+    parser.add_argument(
         "--mar-threshold",
         type=float,
         default=0.6,
@@ -94,6 +100,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Disable CLAHE contrast enhancement before landmark detection",
     )
+    parser.add_argument(
+        "--disable-ear-calibration",
+        action="store_true",
+        help="Disable startup EAR calibration and use static --ear-threshold",
+    )
     return parser
 
 
@@ -107,6 +118,8 @@ def main() -> None:
         parser.error("--mar-threshold must be greater than 0 and less than 2.")
     if args.frame_threshold < 1:
         parser.error("--frame-threshold must be at least 1.")
+    if args.ear_calibration_frames < 1:
+        parser.error("--ear-calibration-frames must be at least 1.")
     if args.yawn_frame_threshold < 1:
         parser.error("--yawn-frame-threshold must be at least 1.")
     if args.mar_smoothing_window < 1:
@@ -125,6 +138,8 @@ def main() -> None:
         predictor_path=args.predictor_path,
         eye_aspect_ratio_threshold=args.ear_threshold,
         consecutive_frame_threshold=args.frame_threshold,
+        enable_ear_calibration=not args.disable_ear_calibration,
+        ear_calibration_frames=args.ear_calibration_frames,
         mouth_aspect_ratio_threshold=args.mar_threshold,
         yawn_frame_threshold=args.yawn_frame_threshold,
         mar_smoothing_window=args.mar_smoothing_window,
