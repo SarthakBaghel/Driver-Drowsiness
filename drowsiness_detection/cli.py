@@ -57,6 +57,18 @@ def build_parser() -> argparse.ArgumentParser:
         help="Consecutive high-MAR frames required to trigger yawning alert",
     )
     parser.add_argument(
+        "--mar-smoothing-window",
+        type=int,
+        default=5,
+        help="Temporal smoothing window for MAR (in frames)",
+    )
+    parser.add_argument(
+        "--face-upsample",
+        type=int,
+        default=1,
+        help="Dlib face detector upsample level for better landmark accuracy",
+    )
+    parser.add_argument(
         "--frame-width",
         type=int,
         default=450,
@@ -77,6 +89,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Disable mouth contour drawing",
     )
+    parser.add_argument(
+        "--disable-clahe",
+        action="store_true",
+        help="Disable CLAHE contrast enhancement before landmark detection",
+    )
     return parser
 
 
@@ -92,6 +109,10 @@ def main() -> None:
         parser.error("--frame-threshold must be at least 1.")
     if args.yawn_frame_threshold < 1:
         parser.error("--yawn-frame-threshold must be at least 1.")
+    if args.mar_smoothing_window < 1:
+        parser.error("--mar-smoothing-window must be at least 1.")
+    if args.face_upsample < 0:
+        parser.error("--face-upsample must be 0 or greater.")
     if args.camera_index < -1:
         parser.error("--camera-index must be -1 or greater.")
     if args.camera_scan_limit < 1:
@@ -106,6 +127,9 @@ def main() -> None:
         consecutive_frame_threshold=args.frame_threshold,
         mouth_aspect_ratio_threshold=args.mar_threshold,
         yawn_frame_threshold=args.yawn_frame_threshold,
+        mar_smoothing_window=args.mar_smoothing_window,
+        face_detector_upsample=args.face_upsample,
+        enable_clahe_preprocess=not args.disable_clahe,
         camera_index=args.camera_index,
         camera_scan_limit=args.camera_scan_limit,
         excluded_camera_indices=tuple(args.exclude_camera_index),

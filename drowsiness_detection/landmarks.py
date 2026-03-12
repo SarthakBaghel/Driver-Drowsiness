@@ -4,6 +4,7 @@ import numpy as np
 
 LEFT_EYE_SLICE: Tuple[int, int] = (42, 48)
 RIGHT_EYE_SLICE: Tuple[int, int] = (36, 42)
+OUTER_MOUTH_SLICE: Tuple[int, int] = (48, 60)
 INNER_MOUTH_SLICE: Tuple[int, int] = (60, 68)
 
 

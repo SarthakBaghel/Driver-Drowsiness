@@ -65,6 +65,8 @@ python3 -m drowsiness_detection \
   --frame-threshold 20 \
   --mar-threshold 0.6 \
   --yawn-frame-threshold 30 \
+  --mar-smoothing-window 5 \
+  --face-upsample 1 \
   --frame-width 450
 ```
 
@@ -72,6 +74,7 @@ Additional option:
 - `--hide-eye-contours` to disable eye contour drawing.
 - `--hide-mouth-contours` to disable inner-mouth contour drawing.
 - `--exclude-camera-index N` (repeatable) to skip virtual/problematic cameras in auto mode.
+- `--disable-clahe` to disable contrast enhancement used for more stable lip landmarks.
 
 ## Notes
 

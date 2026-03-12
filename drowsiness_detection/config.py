@@ -10,6 +10,9 @@ class DetectorConfig:
     consecutive_frame_threshold: int = 20
     mouth_aspect_ratio_threshold: float = 0.6
     yawn_frame_threshold: int = 30
+    mar_smoothing_window: int = 5
+    face_detector_upsample: int = 1
+    enable_clahe_preprocess: bool = True
     camera_index: int = -1
     camera_scan_limit: int = 3
     excluded_camera_indices: Tuple[int, ...] = ()
