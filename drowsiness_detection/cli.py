@@ -16,8 +16,15 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--camera-scan-limit",
         type=int,
-        default=6,
+        default=3,
         help="How many camera indexes to probe when --camera-index=-1",
+    )
+    parser.add_argument(
+        "--exclude-camera-index",
+        type=int,
+        action="append",
+        default=[],
+        help="Camera index to skip in auto-select mode (repeatable)",
     )
     parser.add_argument(
         "--predictor-path",
@@ -38,6 +45,18 @@ def build_parser() -> argparse.ArgumentParser:
         help="Consecutive closed-eye frames required to trigger alert",
     )
     parser.add_argument(
+        "--mar-threshold",
+        type=float,
+        default=0.6,
+        help="Mouth aspect ratio threshold to treat mouth as yawning",
+    )
+    parser.add_argument(
+        "--yawn-frame-threshold",
+        type=int,
+        default=30,
+        help="Consecutive high-MAR frames required to trigger yawning alert",
+    )
+    parser.add_argument(
         "--frame-width",
         type=int,
         default=450,
@@ -53,6 +72,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Disable eye contour drawing",
     )
+    parser.add_argument(
+        "--hide-mouth-contours",
+        action="store_true",
+        help="Disable mouth contour drawing",
+    )
     return parser
 
 
@@ -62,22 +86,33 @@ def main() -> None:
     args = parser.parse_args()
     if not 0.0 < args.ear_threshold < 1.0:
         parser.error("--ear-threshold must be between 0 and 1.")
+    if not 0.0 < args.mar_threshold < 2.0:
+        parser.error("--mar-threshold must be greater than 0 and less than 2.")
     if args.frame_threshold < 1:
         parser.error("--frame-threshold must be at least 1.")
+    if args.yawn_frame_threshold < 1:
+        parser.error("--yawn-frame-threshold must be at least 1.")
     if args.camera_index < -1:
         parser.error("--camera-index must be -1 or greater.")
     if args.camera_scan_limit < 1:
         parser.error("--camera-scan-limit must be at least 1.")
+    for excluded_index in args.exclude_camera_index:
+        if excluded_index < 0:
+            parser.error("--exclude-camera-index values must be 0 or greater.")
 
     config = DetectorConfig(
         predictor_path=args.predictor_path,
         eye_aspect_ratio_threshold=args.ear_threshold,
         consecutive_frame_threshold=args.frame_threshold,
+        mouth_aspect_ratio_threshold=args.mar_threshold,
+        yawn_frame_threshold=args.yawn_frame_threshold,
         camera_index=args.camera_index,
         camera_scan_limit=args.camera_scan_limit,
+        excluded_camera_indices=tuple(args.exclude_camera_index),
         frame_width=args.frame_width,
         window_title=args.window_title,
         show_eye_contours=not args.hide_eye_contours,
+        show_mouth_contours=not args.hide_mouth_contours,
     )
 
     from .app import run

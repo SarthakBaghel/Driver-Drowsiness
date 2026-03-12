@@ -8,7 +8,9 @@ from .detector import DrowsinessDetector
 
 def run(config: DetectorConfig) -> None:
     resolved_camera_index = resolve_camera_index(
-        requested_index=config.camera_index, scan_limit=config.camera_scan_limit
+        requested_index=config.camera_index,
+        scan_limit=config.camera_scan_limit,
+        excluded_indices=config.excluded_camera_indices,
     )
     detector = DrowsinessDetector(config)
     capture = cv2.VideoCapture(resolved_camera_index)

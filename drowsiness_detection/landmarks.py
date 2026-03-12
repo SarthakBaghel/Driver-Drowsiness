@@ -4,6 +4,7 @@ import numpy as np
 
 LEFT_EYE_SLICE: Tuple[int, int] = (42, 48)
 RIGHT_EYE_SLICE: Tuple[int, int] = (36, 42)
+INNER_MOUTH_SLICE: Tuple[int, int] = (60, 68)
 
 
 def shape_to_np(shape: object, dtype: str = "int") -> np.ndarray:
