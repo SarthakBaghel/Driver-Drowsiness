@@ -12,6 +12,11 @@ class CliArgumentTests(unittest.TestCase):
         self.assertAlmostEqual(args.mar_threshold, 0.72, places=5)
         self.assertEqual(args.yawn_frame_threshold, 40)
 
+    def test_ear_calibration_arguments_are_parsed(self) -> None:
+        args = self.parser.parse_args(["--ear-calibration-frames", "180", "--disable-ear-calibration"])
+        self.assertEqual(args.ear_calibration_frames, 180)
+        self.assertTrue(args.disable_ear_calibration)
+
     def test_mar_smoothing_and_face_upsample_arguments_are_parsed(self) -> None:
         args = self.parser.parse_args(["--mar-smoothing-window", "7", "--face-upsample", "2"])
         self.assertEqual(args.mar_smoothing_window, 7)

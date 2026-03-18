@@ -1,8 +1,9 @@
 # Drowsiness Detection (Webcam)
 
-Real-time driver drowsiness detection using facial landmarks, Eye Aspect Ratio (EAR), and Mouth Aspect Ratio (MAR).
+Real-time driver drowsiness detection using facial landmarks, adaptive Eye Aspect Ratio (EAR), and Mouth Aspect Ratio (MAR).
 
 When you run the app, it opens your webcam automatically, processes frames in real time, and shows:
+- an EAR calibration phase at startup to learn a personalized eye-closure threshold.
 - a drowsiness alert when eyes stay closed for a configured number of consecutive frames.
 - a yawning alert when mouth opening (MAR) stays above threshold for a configured number of consecutive frames.
 
@@ -63,6 +64,7 @@ python3 -m drowsiness_detection \
   --predictor-path models/shape_predictor_68_face_landmarks.dat \
   --ear-threshold 0.25 \
   --frame-threshold 20 \
+  --ear-calibration-frames 300 \
   --mar-threshold 0.6 \
   --yawn-frame-threshold 30 \
   --mar-smoothing-window 5 \
@@ -75,10 +77,12 @@ Additional option:
 - `--hide-mouth-contours` to disable inner-mouth contour drawing.
 - `--exclude-camera-index N` (repeatable) to skip virtual/problematic cameras in auto mode.
 - `--disable-clahe` to disable contrast enhancement used for more stable lip landmarks.
+- `--disable-ear-calibration` to use the static `--ear-threshold` instead of a startup calibration phase.
 
 ## Notes
 
 - Ensure the predictor file exists at `models/shape_predictor_68_face_landmarks.dat`.
+- By default, EAR calibration runs on the first `300` valid face frames and sets the personalized threshold to `(max EAR + min EAR) / 2`.
 - By default, `--camera-index -1` auto-selects cameras heuristically and prefers higher indexes when multiple cameras exist (common fix for iPhone/OBS taking lower indexes).
 - Use `--exclude-camera-index` to skip OBS or other virtual cameras (for example `--exclude-camera-index 1`).
 - If needed, force normal webcam manually, usually:

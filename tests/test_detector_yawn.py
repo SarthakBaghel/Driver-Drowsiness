@@ -11,6 +11,18 @@ import numpy as np
 from drowsiness_detection.config import DetectorConfig
 
 
+class _FakeRect:
+    def __init__(self, width: int = 100, height: int = 100) -> None:
+        self._width = width
+        self._height = height
+
+    def width(self) -> int:
+        return self._width
+
+    def height(self) -> int:
+        return self._height
+
+
 def _build_face_coordinates(mar_points: np.ndarray) -> np.ndarray:
     coordinates = np.zeros((68, 2), dtype=float)
 
@@ -33,7 +45,7 @@ def _build_face_coordinates(mar_points: np.ndarray) -> np.ndarray:
 class DetectorYawnTests(unittest.TestCase):
     def setUp(self) -> None:
         fake_dlib = types.ModuleType("dlib")
-        fake_dlib.get_frontal_face_detector = lambda: (lambda _gray, _upsample: [object()])
+        fake_dlib.get_frontal_face_detector = lambda: (lambda _gray, _upsample: [_FakeRect()])
         fake_dlib.shape_predictor = lambda _path: (lambda _gray, _subject: object())
         self.dlib_patch = patch.dict(sys.modules, {"dlib": fake_dlib})
         self.dlib_patch.start()
@@ -83,6 +95,7 @@ class DetectorYawnTests(unittest.TestCase):
             predictor_path=self.predictor_path,
             eye_aspect_ratio_threshold=0.25,
             consecutive_frame_threshold=20,
+            enable_ear_calibration=False,
             mouth_aspect_ratio_threshold=0.6,
             yawn_frame_threshold=3,
             mar_smoothing_window=1,
